@@ -29,12 +29,15 @@ app.get('/', (req, res) => {
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    const orderCollection = client.db("creativeagency").collection("orders");
+    const orderCollection =  client.db("creativeagency").collection("orders");
+    
     // const serviceCollection = client.db("doctorsPortal").collection("doctors");
-    // console.log('connection established')
+    
 
+    //post to site 
     app.post('/addOrder', (req, res) => {
         const order = req.body;
+        console.log(working);
         orderCollection.insertOne(order)
             .then(result => {
                 console.log(result)
@@ -42,8 +45,8 @@ client.connect(err => {
             })
     });
 
-    //order dashboard content 
-    app.get('/orders', (req, res) => {
+    // order dashboard content 
+    app.get('/orderdashboard', (req, res) => {
         const bearer = req.headers.authorization;
         if (bearer && bearer.startsWith('Bearer ')) {
             const idToken = bearer.split(' ')[1];
@@ -69,48 +72,48 @@ client.connect(err => {
         }
     })
 
-    app.post('/appointmentsByDate', (req, res) => {
-        const date = req.body;
-        const email = req.body.email;
-        serviceCollection.find({ email: email })
-            .toArray((err, doctors) => {
-                const filter = { date: date.date }
-                if (doctors.length === 0) {
-                    filter.email = email;
-                }
-                orderCollection.find(filter)
-                    .toArray((err, documents) => {
-                        console.log(email, date.date, doctors, documents)
-                        res.send(documents);
-                    })
-            })
-    })
+    // app.post('/appointmentsByDate', (req, res) => {
+    //     const date = req.body;
+    //     const email = req.body.email;
+    //     serviceCollection.find({ email: email })
+    //         .toArray((err, doctors) => {
+    //             const filter = { date: date.date }
+    //             if (doctors.length === 0) {
+    //                 filter.email = email;
+    //             }
+    //             orderCollection.find(filter)
+    //                 .toArray((err, documents) => {
+    //                     console.log(email, date.date, doctors, documents)
+    //                     res.send(documents);
+    //                 })
+    //         })
+    // })
 
-    app.post('/addService', (req, res) => {
-        const file = req.files.file;
-        const name = req.body.name;
-        const email = req.body.email;
-        const newImg = file.data;
-        const encImg = newImg.toString('base64');
+    // app.post('/addService', (req, res) => {
+    //     const file = req.files.file;
+    //     const name = req.body.name;
+    //     const email = req.body.email;
+    //     const newImg = file.data;
+    //     const encImg = newImg.toString('base64');
 
-        var image = {
-            contentType: file.mimetype,
-            size: file.size,
-            img: Buffer.from(encImg, 'base64')
-        };
+    //     var image = {
+    //         contentType: file.mimetype,
+    //         size: file.size,
+    //         img: Buffer.from(encImg, 'base64')
+    //     };
 
-        serviceCollection.insertOne({ name, email, image })
-            .then(result => {
-                res.send(result.insertedCount > 0);
-            })
-    })
+    //     serviceCollection.insertOne({ name, email, image })
+    //         .then(result => {
+    //             res.send(result.insertedCount > 0);
+    //         })
+    // })
 
-    app.get('/services', (req, res) => {
-        serviceCollection.find({})
-            .toArray((err, documents) => {
-                res.send(documents);
-            })
-    });
+    // app.get('/services', (req, res) => {
+    //     serviceCollection.find({})
+    //         .toArray((err, documents) => {
+    //             res.send(documents);
+    //         })
+    // });
 
     // app.post('/isDoctor', (req, res) => {
     //     const email = req.body.email;
