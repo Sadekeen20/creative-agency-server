@@ -9,6 +9,24 @@ require('dotenv').config()
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.luzew.mongodb.net/${process.env.DB_NAME}?retryWrites=true&w=majority`;
 const app = express()
 
+
+
+
+
+
+
+// const MongoClient = require('mongodb').MongoClient;
+// const uri = "mongodb+srv://<username>:<password>@cluster0.luzew.mongodb.net/<dbname>?retryWrites=true&w=majority";
+// const client = new MongoClient(uri, { useNewUrlParser: true });
+// client.connect(err => {
+//   const collection = client.db("test").collection("devices");
+//   // perform actions on the collection object
+//   client.close();
+// });
+
+
+
+
 app.use(bodyParser.json());
 app.use(cors());
 // app.use(express.static('doctors'));
@@ -37,7 +55,7 @@ client.connect(err => {
     //post to site 
     app.post('/addOrder', (req, res) => {
         const order = req.body;
-        console.log(working);
+        console.log('working');
         orderCollection.insertOne(order)
             .then(result => {
                 console.log(result)
