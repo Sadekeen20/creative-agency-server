@@ -88,7 +88,7 @@ client.connect(err => {
 
      //show all review 
      app.get('/review',(req, res) => {
-        reviewCollection.find({})
+        reviewCollection.find({}).limit(3)
         .toArray((err,documents) => {
             res.send(documents)
         })
