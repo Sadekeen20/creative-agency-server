@@ -12,21 +12,6 @@ const app = express()
 
 
 
-
-
-
-// const MongoClient = require('mongodb').MongoClient;
-// const uri = "mongodb+srv://<username>:<password>@cluster0.luzew.mongodb.net/<dbname>?retryWrites=true&w=majority";
-// const client = new MongoClient(uri, { useNewUrlParser: true });
-// client.connect(err => {
-//   const collection = client.db("test").collection("devices");
-//   // perform actions on the collection object
-//   client.close();
-// });
-
-
-
-
 app.use(bodyParser.json());
 app.use(cors());
 // app.use(express.static('doctors'));
@@ -48,7 +33,7 @@ app.get('/', (req, res) => {
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
     const orderCollection =  client.db("creativeagency").collection("orders");
-    
+    const reviewCollection =  client.db("creativeagency").collection("reviews");
     // const serviceCollection = client.db("doctorsPortal").collection("doctors");
     
 
@@ -89,6 +74,17 @@ client.connect(err => {
             res.status(401).send('un-authorized access')
         }
     })
+
+    //post to site 
+    app.post('/addReview', (req, res) => {
+        const review = req.body;
+        // console.log('working');
+        reviewCollection.insertOne(review)
+            .then(result => {
+                console.log(result)
+                res.send(result.insertedCount > 0)
+            })
+    });
 
     // app.post('/appointmentsByDate', (req, res) => {
     //     const date = req.body;
