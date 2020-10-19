@@ -86,6 +86,14 @@ client.connect(err => {
             })
     });
 
+     //show all review 
+     app.get('/review',(req, res) => {
+        reviewCollection.find({}).limit(3)
+        .toArray((err,documents) => {
+            res.send(documents)
+        })
+    })
+
     // app.post('/appointmentsByDate', (req, res) => {
     //     const date = req.body;
     //     const email = req.body.email;
