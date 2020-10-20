@@ -94,22 +94,7 @@ client.connect(err => {
         })
     })
     console.log('ok4')
-    // app.post('/services', (req, res) => {
-    //     const date = req.body;
-    //     const email = req.body.email;
-    //     adminCollection.find({ email: email })
-    //         .toArray((err, admins) => {
-    //             const filter = { date: date.date }
-    //             if (admins.length === 0) {
-    //                 filter.email = email;
-    //             }
-    //             orderCollection.find(filter)
-    //                 .toArray((err, documents) => {
-    //                     console.log(email, date.date, admins, documents)
-    //                     res.send(documents);
-    //                 })
-    //         })
-    // })
+    
 
     app.post('/addAService', (req, res) => {
         const file = req.files.file;
@@ -130,12 +115,7 @@ client.connect(err => {
             })
     })
     console.log('ok5')
-    // app.get('/selectedService/:id',(req,res)=>{
-    //     serviceCollection.find({_id:ObjectId(req.params.id)})
-    //     .toArray((err,document)=>{
-    //         res.send(document[0])
-    //     })
-    // })
+   
 
     app.patch("/updateStatus/:id",(req,res)=>{
             orderCollection.updateOne({_id:ObjectId(req.params.id)},
@@ -143,13 +123,7 @@ client.connect(err => {
                 .then(result=>res.send(result.matchedCount>0))
         })
         console.log('ok6')
-    // app.post('/makeAdmin', (req, res) => {
-    //     const email = req.body.email;
-    //     adminsCollection.insertOne({email:email})
-    //     .then(result =>{ 
-    //             res.send(result.insertedCount>0 )
-    //     }) 
-    // })
+    
 
 
     app.post('/makeAdmin',(req,res)=>{     
@@ -168,19 +142,14 @@ client.connect(err => {
         })
     })
     console.log('ok8')
-    // app.get('/findAdmin/:email',(req,res)=>{
-    //     adminsCollection.find({email:req.params.email})
-    //     .toArray((err,document)=>{
-    //         res.send(document.length>0)
-    //     })
-    // })
+    
 
-    // app.get('/services', (req, res) => {
-    //     serviceCollection.find({})
-    //         .toArray((err, documents) => {
-    //             res.send(documents);
-    //         })
-    // });
+    app.get('/services', (req, res) => {
+        serviceCollection.find({})
+            .toArray((err, documents) => {
+                res.send(documents);
+            })
+    });
 
     app.post('/isAdmin', (req, res) => {
         const email = req.body.email;
