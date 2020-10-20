@@ -34,8 +34,8 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
     const orderCollection =  client.db("creativeagency").collection("orders");
     const reviewCollection =  client.db("creativeagency").collection("reviews");
-    const serviceCollection = client.db("creativeagency").collection("services");
-    
+    const adminCollection = client.db("creativeagency").collection("admins");
+    const serviceCollection=client.db("creativeagency").collection("services");
 
     //post to site 
     app.post('/addOrder', (req, res) => {
@@ -49,7 +49,7 @@ client.connect(err => {
     });
 
     // order dashboard content 
-    app.get('/orderdashboard', (req, res) => {
+    app.get('/allOrder', (req, res) => {
         const bearer = req.headers.authorization;
         if (bearer && bearer.startsWith('Bearer ')) {
             const idToken = bearer.split(' ')[1];
@@ -94,18 +94,18 @@ client.connect(err => {
         })
     })
 
-    // app.post('/appointmentsByDate', (req, res) => {
+    // app.post('/services', (req, res) => {
     //     const date = req.body;
     //     const email = req.body.email;
-    //     serviceCollection.find({ email: email })
-    //         .toArray((err, doctors) => {
+    //     adminCollection.find({ email: email })
+    //         .toArray((err, admins) => {
     //             const filter = { date: date.date }
-    //             if (doctors.length === 0) {
+    //             if (admins.length === 0) {
     //                 filter.email = email;
     //             }
     //             orderCollection.find(filter)
     //                 .toArray((err, documents) => {
-    //                     console.log(email, date.date, doctors, documents)
+    //                     console.log(email, date.date, admins, documents)
     //                     res.send(documents);
     //                 })
     //         })
@@ -130,6 +130,43 @@ client.connect(err => {
             })
     })
 
+    // app.get('/selectedService/:id',(req,res)=>{
+    //     serviceCollection.find({_id:ObjectId(req.params.id)})
+    //     .toArray((err,document)=>{
+    //         res.send(document[0])
+    //     })
+    // })
+
+    app.patch("/updateStatus/:id",(req,res)=>{
+            orderCollection.updateOne({_id:ObjectId(req.params.id)},
+                {$set:{status:req.body.updatedStatus}})
+                .then(result=>res.send(result.matchedCount>0))
+        })
+
+    // app.post('/makeAdmin', (req, res) => {
+    //     const email = req.body.email;
+    //     adminsCollection.insertOne({email:email})
+    //     .then(result =>{ 
+    //             res.send(result.insertedCount>0 )
+    //     }) 
+    // })
+
+
+    app.post('/makeAdmin',(req,res)=>{     
+        const email = req.body.email   
+        adminCollection.insertOne({email:email})
+        .then(result =>{ 
+                res.send(result.insertedCount>0 )
+        })                
+    })   
+
+    // app.get('/findAdmin/:email',(req,res)=>{
+    //     adminsCollection.find({email:req.params.email})
+    //     .toArray((err,document)=>{
+    //         res.send(document.length>0)
+    //     })
+    // })
+
     // app.get('/services', (req, res) => {
     //     serviceCollection.find({})
     //         .toArray((err, documents) => {
@@ -137,13 +174,13 @@ client.connect(err => {
     //         })
     // });
 
-    // app.post('/isDoctor', (req, res) => {
-    //     const email = req.body.email;
-    //     doctorCollection.find({ email: email })
-    //         .toArray((err, doctors) => {
-    //             res.send(doctors.length > 0);
-    //         })
-    // })
+    app.post('/isAdmin', (req, res) => {
+        const email = req.body.email;
+        adminCollection.find({ email: email })
+            .toArray((err, admins) => {
+                res.send(admins.length > 0);
+            })
+    })
 
 });
 
