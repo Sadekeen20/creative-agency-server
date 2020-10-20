@@ -32,9 +32,9 @@ app.get('/', (req, res) => {
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
-    const orderCollection =  client.db("creativeagency").collection("orders");
-    const reviewCollection =  client.db("creativeagency").collection("reviews");
-    const adminCollection = client.db("creativeagency").collection("admins");
+    const orderCollection =client.db("creativeagency").collection("orders");
+    const reviewCollection =client.db("creativeagency").collection("reviews");
+    const adminCollection =client.db("creativeagency").collection("admins");
     const serviceCollection=client.db("creativeagency").collection("services");
 
     //post to site 
@@ -47,9 +47,9 @@ client.connect(err => {
                 res.send(result.insertedCount > 0)
             })
     });
-
+    console.log('ok1')
     // order dashboard content 
-    app.get('/allOrder', (req, res) => {
+    app.get('/orderdashboard', (req, res) => {
         const bearer = req.headers.authorization;
         if (bearer && bearer.startsWith('Bearer ')) {
             const idToken = bearer.split(' ')[1];
@@ -74,7 +74,7 @@ client.connect(err => {
             res.status(401).send('un-authorized access')
         }
     })
-
+    console.log('ok2')
     //post to site 
     app.post('/addReview', (req, res) => {
         const review = req.body;
@@ -85,7 +85,7 @@ client.connect(err => {
                 res.send(result.insertedCount > 0)
             })
     });
-
+    console.log('ok3')
      //show all review 
      app.get('/review',(req, res) => {
         reviewCollection.find({}).limit(3)
@@ -93,7 +93,7 @@ client.connect(err => {
             res.send(documents)
         })
     })
-
+    console.log('ok4')
     // app.post('/services', (req, res) => {
     //     const date = req.body;
     //     const email = req.body.email;
@@ -113,8 +113,8 @@ client.connect(err => {
 
     app.post('/addAService', (req, res) => {
         const file = req.files.file;
-        const name = req.body.name;
-        const email = req.body.email;
+        const title = req.body.title;
+        const description = req.body.description;
         const newImg = file.data;
         const encImg = newImg.toString('base64');
 
@@ -124,12 +124,12 @@ client.connect(err => {
             img: Buffer.from(encImg, 'base64')
         };
 
-        serviceCollection.insertOne({ name, email, image })
+        serviceCollection.insertOne({ title, description, image })
             .then(result => {
                 res.send(result.insertedCount > 0);
             })
     })
-
+    console.log('ok5')
     // app.get('/selectedService/:id',(req,res)=>{
     //     serviceCollection.find({_id:ObjectId(req.params.id)})
     //     .toArray((err,document)=>{
@@ -142,7 +142,7 @@ client.connect(err => {
                 {$set:{status:req.body.updatedStatus}})
                 .then(result=>res.send(result.matchedCount>0))
         })
-
+        console.log('ok6')
     // app.post('/makeAdmin', (req, res) => {
     //     const email = req.body.email;
     //     adminsCollection.insertOne({email:email})
@@ -159,7 +159,15 @@ client.connect(err => {
                 res.send(result.insertedCount>0 )
         })                
     })   
-
+    console.log('ok7')
+    //show all review 
+    app.get('/allOrder',(req, res) => {
+        orderCollection.find({})
+        .toArray((err,documents) => {
+            res.send(documents)
+        })
+    })
+    console.log('ok8')
     // app.get('/findAdmin/:email',(req,res)=>{
     //     adminsCollection.find({email:req.params.email})
     //     .toArray((err,document)=>{
@@ -181,7 +189,7 @@ client.connect(err => {
                 res.send(admins.length > 0);
             })
     })
-
+    console.log('ok9')
 });
 
 
