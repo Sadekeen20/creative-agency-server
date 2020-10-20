@@ -2,7 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const admin = require("firebase-admin");
-// const fileUpload = require('express-fileupload');
+const fileUpload = require('express-fileupload');
 const MongoClient = require('mongodb').MongoClient;
 require('dotenv').config()
 
@@ -14,8 +14,8 @@ const app = express()
 
 app.use(bodyParser.json());
 app.use(cors());
-// app.use(express.static('doctors'));
-// app.use(fileUpload());
+app.use(express.static('services'));
+app.use(fileUpload());
 
 var serviceAccount = require("./sadekeen-marltj-firebase-adminsdk-eq8la-9d310c81b9.json");
 
@@ -34,7 +34,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 client.connect(err => {
     const orderCollection =  client.db("creativeagency").collection("orders");
     const reviewCollection =  client.db("creativeagency").collection("reviews");
-    // const serviceCollection = client.db("doctorsPortal").collection("doctors");
+    const serviceCollection = client.db("creativeagency").collection("services");
     
 
     //post to site 
@@ -111,24 +111,24 @@ client.connect(err => {
     //         })
     // })
 
-    // app.post('/addService', (req, res) => {
-    //     const file = req.files.file;
-    //     const name = req.body.name;
-    //     const email = req.body.email;
-    //     const newImg = file.data;
-    //     const encImg = newImg.toString('base64');
+    app.post('/addAService', (req, res) => {
+        const file = req.files.file;
+        const name = req.body.name;
+        const email = req.body.email;
+        const newImg = file.data;
+        const encImg = newImg.toString('base64');
 
-    //     var image = {
-    //         contentType: file.mimetype,
-    //         size: file.size,
-    //         img: Buffer.from(encImg, 'base64')
-    //     };
+        var image = {
+            contentType: file.mimetype,
+            size: file.size,
+            img: Buffer.from(encImg, 'base64')
+        };
 
-    //     serviceCollection.insertOne({ name, email, image })
-    //         .then(result => {
-    //             res.send(result.insertedCount > 0);
-    //         })
-    // })
+        serviceCollection.insertOne({ name, email, image })
+            .then(result => {
+                res.send(result.insertedCount > 0);
+            })
+    })
 
     // app.get('/services', (req, res) => {
     //     serviceCollection.find({})
